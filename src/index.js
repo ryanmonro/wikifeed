@@ -1,9 +1,55 @@
-import _ from 'lodash'
+import Parser from 'rss-parser'
 
-function component() {
-  const element = document.createElement('div')
-  element.innerHTML = _.join(['Hello', 'webpack!'], ' ')
-  return element
+const CORS_PROXY = "https://cors-anywhere.herokuapp.com/"
+let items = []
+let seenTitles = []
+const parser = new Parser({
+  customFields: {
+    item: [
+      ['dc:creator', 'creator'],
+    ]
+  }
+})
+
+let updateItems = function(){
+  parser.parseURL(CORS_PROXY + "https://en.wikipedia.org/w/index.php?title=Special:RecentChanges&feed=rss", function(err, feed){
+    if(typeof feed != 'undefined'){
+      feed.items.forEach(function(item){
+        const titleTime = item.title + item.pubDate
+        if(!seenTitles.includes(titleTime)){
+          items.push(item)
+          seenTitles.push(titleTime)
+        }
+      })
+    } else {
+      draw('Too many requests')
+    }
+  })
 }
 
-document.body.appendChild(component())
+let draw = function(innerHTML){
+  let element = document.createElement('div')
+  element.className = "wiki-link"
+  element.innerHTML = innerHTML
+  element.style.position = "fixed"
+  document.body.appendChild(element)
+  element.style.left = Math.random() * (window.innerWidth - element.offsetWidth) + "px"
+  element.style.top = Math.random() * (window.innerHeight - element.offsetHeight - 100) + "px"
+  window.setTimeout(function(){
+    element.remove()
+  }, 10000)
+}
+
+let rssInterval = window.setInterval(function(){
+  updateItems()
+}, 30000)
+
+let windowInterval = window.setInterval(function(){
+  if(items.length > 0){
+    let item = items.pop()
+    draw(`<a href="${item.link}" target="_blank">${item.title}</a>`)
+    console.log(items.length + " items in queue; seen " + seenTitles.length + " items.")
+  }
+}, 2000)
+
+updateItems()

@@ -1,0 +1,23 @@
+.wiki-link {
+  position: absolute;
+  font-family: 'Linux Libertine','Georgia','Times',serif; font-size: 28px;
+  font-weight: 400;
+  opacity: 0;
+  animation-name: wiki-fade;
+  animation-duration: 5s;
+  animation-timing-function: ease-in;
+}
+
+.wiki-link > a{
+  text-decoration: none;
+  color: black;
+}
+
+.wiki-link > a:hover{
+  text-decoration: underline;
+}
+
+@keyframes wiki-fade {
+  0%   {opacity: 1; }
+  100% {opacity: 0; transform: translateY(100px); }
+}
