@@ -12,7 +12,14 @@ const bannedTitlePrefices = [
   'Draft:',
   'Template:',
   'Wikipedia:',
-  'Wikipedia talk:'
+  'Wikipedia talk:',
+  'Portal:',
+  'Category:',
+  'Category talk:',
+  'File:',
+  'File talk:',
+  'Module:',
+  'Module talk:'
 ]
 const parser = new Parser({
   customFields: {
