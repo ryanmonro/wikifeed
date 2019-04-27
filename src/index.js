@@ -1,8 +1,18 @@
 import Parser from 'rss-parser'
 
 const CORS_PROXY = "https://cors-anywhere.herokuapp.com/"
+// const CORS_PROXY = "https://crossorigin.me/"
 let items = []
 let seenTitles = []
+const bannedTitlePrefices = [
+  'User:',
+  'Talk:',
+  'User talk:',
+  'Draft:',
+  'Template:',
+  'Wikipedia:',
+  'Wikipedia talk:'
+]
 const parser = new Parser({
   customFields: {
     item: [
@@ -11,14 +21,29 @@ const parser = new Parser({
   }
 })
 
+String.prototype.startsWithAnyOf = function(array){
+  for(let item of array){
+    if (this.startsWith(item)) {
+      return true
+    }
+  }
+  return false
+}
+
+
 let updateItems = function(){
   parser.parseURL(CORS_PROXY + "https://en.wikipedia.org/w/index.php?title=Special:RecentChanges&feed=rss", function(err, feed){
     if(typeof feed != 'undefined'){
       feed.items.forEach(function(item){
         const titleTime = item.title + item.pubDate
         if(!seenTitles.includes(titleTime)){
-          items.push(item)
-          seenTitles.push(titleTime)
+          if (!item.title.startsWithAnyOf(bannedTitlePrefices)) {
+            items.push(item)
+            seenTitles.push(titleTime)
+          }
+          else {
+            console.log("Didn't add " + item.title)
+          }
         }
       })
     } else {
@@ -47,6 +72,7 @@ let rssInterval = window.setInterval(function(){
 let windowInterval = window.setInterval(function(){
   if(items.length > 0){
     let item = items.pop()
+    let link = item.link
     draw(`<a href="${item.link}" target="_blank">${item.title}</a>`)
     console.log(items.length + " items in queue; seen " + seenTitles.length + " items.")
   }
