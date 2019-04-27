@@ -1,7 +1,8 @@
 import Parser from 'rss-parser'
 
-const CORS_PROXY = "https://cors-anywhere.herokuapp.com/"
+// const CORS_PROXY = "https://cors-anywhere.herokuapp.com/"
 // const CORS_PROXY = "https://crossorigin.me/"
+const CORS_PROXY = "https://cors.io/?"
 let items = []
 let seenTitles = []
 const bannedTitlePrefices = [
