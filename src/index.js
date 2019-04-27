@@ -74,9 +74,11 @@ let windowInterval = window.setInterval(function(){
   if(items.length > 0){
     let item = items.pop()
     let link = item.link
-    draw(`<a href="${item.link}" target="_blank">${item.title}</a>`)
+    link = link.split('&diff')[0]
+    draw(`<a href="${link}" target="_blank">${item.title}</a>`)
     console.log(items.length + " items in queue; seen " + seenTitles.length + " items.")
   }
 }, 2000)
 
 updateItems()
+draw('Loading...')
